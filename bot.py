@@ -12,35 +12,6 @@ import textwrap
 import traceback
 import asyncio
 from cogs.utils.dataIO import dataIO
-
-emojiletter={
-	'a' : '🇦',
-	'b' : '🇧',
-	'c' : '🇨',
-	'd' : '🇩',
-	'e' : '🇪',
-	'f' : '🇫',
-	'g' : '🇬',
-	'h' : '🇭',
-	'i' : '🇮',
-	'j' : '🇯',
-	'k' : '🇰',
-	'l' : '🇱',
-	'm' : '🇲',
-	'n' : '🇳',
-	'o' : '🇴',
-	'p' : '🇵',
-	'q' : '🇶',
-	'r' : '🇷',
-	's' : '🇸',
-	't' : '🇹',
-	'u' : '🇺',
-	'v' : '🇻',
-	'w' : '🇼',
-	'x' : '🇽',
-	'y' : '🇾',
-	'z' : '🇿'
-}
 data = {}
 defaultdata = {
 "BOT": {
@@ -75,7 +46,7 @@ def run_wizard():
 heroku = False
 if 'DYNO_RAM' in os.environ:
 	heroku = True
-	TOKEN = os.environ['TOKEN']
+
 else:
 	heroku = False
 	if not os.path.exists('data'):
@@ -131,7 +102,7 @@ def check_foldernob():
 		os.makedirs(NOBPATH)
 
 def check_filenob():
-	defaults = {'hasname':False, 'nob':False, 'breplace': False}
+	defaults = {'hasname':False, 'nob':False, 'breplace' : False}
 	print(NOB_JSON)
 	if not dataIO.is_valid_json(NOB_JSON):
 		dataIO.save_json(NOB_JSON, defaults)
@@ -145,14 +116,9 @@ def on_message2(message):
 #     if message.author == bot.user:
 #         return
 	# print('lol i enterd a msg')
-	racfserver = bot.get_server('218534373169954816')
-	if message.server == racfserver:
-		return
 	if bot.user != message.author:
 		return
-	if('🅱' in message.content):
-		return
-	channel = message.channel
+	print(message)
 	dukeserver = bot.get_server('249979148246843393') #if you are in racf dont
 	a = message.content
 	nobdict = {}
@@ -160,34 +126,18 @@ def on_message2(message):
 	if '`togglenob`' in a:
 		nobdict['nob'] = not nobdict['nob']
 		dataIO.save_json(NOB_JSON, nobdict)
-		yield from bot.delete_message(message)
-		return
-	if '`togglebrep`' in a:
-		nobdict['breplace'] = not nobdict['breplace']
-		dataIO.save_json(NOB_JSON, nobdict)
-		yield from bot.delete_message(message)
-		return
+	print(nobdict)
 	if heroku==True:
 		prefix = os.environ['PREFIX']
 		if message.content.startswith(prefix):
 			yield from bot.process_commands(message)
 			return
-	print(nobdict)
-	if nobdict['breplace'] and nobdict['nob']:
-		channel = message.channel
-		msg = a
-		for letter in emojiletter:
-			msg = msg.replace(letter, emojiletter[letter])
-		# msg =  a.replace('b', '🅱' )
-		yield from self.bot.edit_message(message, new_content=msg)
-	if not nobdict['nob'] and not (a == '' or a == None or '`nob`' in a):
+	if not dataIO.load_json(NOB_JSON)['nob'] and not (a == '' or a == None or '`nob`' in a):
 		b = ''
 		hasname = nobdict['hasname']
 		if '`togglename`' in a:
 			nobdict['hasname'] = not hasname
 			dataIO.save_json(NOB_JSON, nobdict)
-			yield from bot.delete_message(message)
-			return
 		for i, letter in enumerate(a):
 			if(i==0 and letter.isalpha()):
 				b += '🅱️'
@@ -195,10 +145,11 @@ def on_message2(message):
 				b += '🅱️'
 			else:
 				b += letter
+		yield from bot.delete_message(message)
 		if hasname:
-			yield from bot.edit_message(message,'{}: {}'.format(message.author.display_name, b))
+			yield from bot.send_message(channel,'{}: {}'.format(message.author.display_name, b))
 		else:
-			yield from bot.edit_message(channel,'{}'.format(b))
+			yield from bot.send_message(channel,'{}'.format(b))
 		
 	yield from bot.process_commands(message)
 	
@@ -588,5 +539,6 @@ try:
 	bot.run(TOKEN, bot=False)
 except Exception as e:
 	print('\n[ERROR]: \n{}\n'.format(e))
+	input()
 
 	
