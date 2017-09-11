@@ -12,148 +12,196 @@ import textwrap
 import traceback
 import asyncio
 from cogs.utils.dataIO import dataIO
+
+emojiletter={
+	'a' : '🇦',
+	'b' : '🇧',
+	'c' : '🇨',
+	'd' : '🇩',
+	'e' : '🇪',
+	'f' : '🇫',
+	'g' : '🇬',
+	'h' : '🇭',
+	'i' : '🇮',
+	'j' : '🇯',
+	'k' : '🇰',
+	'l' : '🇱',
+	'm' : '🇲',
+	'n' : '🇳',
+	'o' : '🇴',
+	'p' : '🇵',
+	'q' : '🇶',
+	'r' : '🇷',
+	's' : '🇸',
+	't' : '🇹',
+	'u' : '🇺',
+	'v' : '🇻',
+	'w' : '🇼',
+	'x' : '🇽',
+	'y' : '🇾',
+	'z' : '🇿'
+}
 data = {}
 defaultdata = {
 "BOT": {
-    "TOKEN" : 'insert token here',
-    "PREFIX" : 's.'
-    },
+	"TOKEN" : 'insert token here',
+	"PREFIX" : 's.'
+	},
 "FIRST" : True
 }
 token = ''
 prefix = ''
 def run_wizard():
-    print('------------------------------------------')
-    print('WELCOME TO THE VERIX-SELFBOT SETUP WIZARD!')
-    print('------------------------------------------')
-    token = input('Enter your token:\n> ')
-    print('------------------------------------------')
-    prefix = input('Enter a prefix for your selfbot:\n> ')
-    if prefix == '':
-        prefix = 's.'
-    data = {
-        "BOT": {
-            "TOKEN" : token,
-            "PREFIX" : prefix
-            },
-        "FIRST" : False
-        }
-    with open('data/config.json','w') as f:
-        f.write(json.dumps(data, indent=4))
-    print('------------------------------------------')
-    print('Successfully saved your data!')
-    print('------------------------------------------')
+	print('------------------------------------------')
+	print('WELCOME TO THE VERIX-SELFBOT SETUP WIZARD!')
+	print('------------------------------------------')
+	token = input('Enter your token:\n> ')
+	print('------------------------------------------')
+	prefix = input('Enter a prefix for your selfbot:\n> ')
+	if prefix == '':
+		prefix = 's.'
+	data = {
+		"BOT": {
+			"TOKEN" : token,
+			"PREFIX" : prefix
+			},
+		"FIRST" : False
+		}
+	with open('data/config.json','w') as f:
+		f.write(json.dumps(data, indent=4))
+	print('------------------------------------------')
+	print('Successfully saved your data!')
+	print('------------------------------------------')
 heroku = False
 if 'DYNO_RAM' in os.environ:
-    heroku = True
+	heroku = True
 
 else:
-    heroku = False
-    if not os.path.exists('data'):
-        os.makedirs('data')
+	heroku = False
+	if not os.path.exists('data'):
+		os.makedirs('data')
 
-    try:
-        open('data/config.json')
-    except:
-        with open('data/config.json','w+') as f:
-            f.write(json.dumps(defaultdata, indent=4))
+	try:
+		open('data/config.json')
+	except:
+		with open('data/config.json','w+') as f:
+			f.write(json.dumps(defaultdata, indent=4))
 
-    with open('data/config.json') as f:
-        if json.load(f)['FIRST']:
-            run_wizard()
+	with open('data/config.json') as f:
+		if json.load(f)['FIRST']:
+			run_wizard()
 
-    with open('data/config.json') as f:  
-        TOKEN = json.load(f)["BOT"]['TOKEN']
+	with open('data/config.json') as f:  
+		TOKEN = json.load(f)["BOT"]['TOKEN']
 
 async def get_pre(bot, message):
 
-    if 'PREFIX' in os.environ:
-        return os.environ['PREFIX']
-        
-    with open('data/config.json') as f:
-        config = json.load(f)
-    try:
-        return config["BOT"]['PREFIX']
-    except:
-        return 's.'
+	if 'PREFIX' in os.environ:
+		return os.environ['PREFIX']
+		
+	with open('data/config.json') as f:
+		config = json.load(f)
+	try:
+		return config["BOT"]['PREFIX']
+	except:
+		return 's.'
 
 bot = commands.Bot(command_prefix=get_pre, self_bot=True, formatter=EmbedHelp())
 bot.remove_command('help')
 _extensions = [
 
-    # 'cogs.clashroyale',
-    'cogs.misc',
-    'cogs.utility',
-    'cogs.utils2',
-    'cogs.info',
-    'cogs.mod',
-    'cogs.stuff',
-    'cogs.react',
-    'cogs.crtags',
-    'cogs.trophy',
-    'cogs.info2'
-    ]
+	# 'cogs.clashroyale',
+	'cogs.misc',
+	'cogs.utility',
+	'cogs.utils2',
+	'cogs.info',
+	'cogs.mod',
+	'cogs.stuff',
+	'cogs.react',
+	'cogs.crtags',
+	'cogs.trophy',
+	'cogs.info2'
+	]
 
 NOBPATH = os.path.join('data', 'nob')
 NOB_JSON = os.path.join(NOBPATH,  'settings.json')
 
 def check_foldernob():
-    if not os.path.exists(NOBPATH):
-        os.makedirs(NOBPATH)
+	if not os.path.exists(NOBPATH):
+		os.makedirs(NOBPATH)
 
 def check_filenob():
-    defaults = {'hasname':False, 'nob':False}
-    print(NOB_JSON)
-    if not dataIO.is_valid_json(NOB_JSON):
-        dataIO.save_json(NOB_JSON, defaults)
-        
+	defaults = {'hasname':False, 'nob':False, 'breplace': False}
+	print(NOB_JSON)
+	if not dataIO.is_valid_json(NOB_JSON):
+		dataIO.save_json(NOB_JSON, defaults)
+		
 check_foldernob()
 check_filenob()
 
 @asyncio.coroutine
 def on_message2(message):
-    # print(message.author)
+	# print(message.author)
 #     if message.author == bot.user:
 #         return
-    # print('lol i enterd a msg')
-    if bot.user != message.author:
-        return
-    if('🅱' in message.content):
-    	return
-    channel = message.channel
-    dukeserver = bot.get_server('249979148246843393') #if you are in racf dont
-    a = message.content
-    nobdict = {}
-    nobdict = dataIO.load_json(NOB_JSON) 
-    if '`togglenob`' in a:
-        nobdict['nob'] = not nobdict['nob']
-        dataIO.save_json(NOB_JSON, nobdict)
-    if heroku==True:
-        prefix = os.environ['PREFIX']
-        if message.content.startswith(prefix):
-            yield from bot.process_commands(message)
-            return
-    if not dataIO.load_json(NOB_JSON)['nob'] and not (a == '' or a == None or '`nob`' in a):
-        b = ''
-        hasname = nobdict['hasname']
-        if '`togglename`' in a:
-            nobdict['hasname'] = not hasname
-            dataIO.save_json(NOB_JSON, nobdict)
-        for i, letter in enumerate(a):
-            if(i==0 and letter.isalpha()):
-                b += '🅱️'
-            elif((not a[i-1].isalpha()) and letter.isalpha()):
-                b += '🅱️'
-            else:
-                b += letter
-        yield from bot.delete_message(message)
-        if hasname:
-            yield from bot.send_message(channel,'{}: {}'.format(message.author.display_name, b))
-        else:
-            yield from bot.send_message(channel,'{}'.format(b))
-        
-    yield from bot.process_commands(message)
-    
+	# print('lol i enterd a msg')
+	racfserver = bot.get_server('218534373169954816')
+	if message.server == racfserver:
+		return
+	if bot.user != message.author:
+		return
+	if('🅱' in message.content):
+		return
+	channel = message.channel
+	dukeserver = bot.get_server('249979148246843393') #if you are in racf dont
+	a = message.content
+	nobdict = {}
+	nobdict = dataIO.load_json(NOB_JSON) 
+	if '`togglenob`' in a:
+		nobdict['nob'] = not nobdict['nob']
+		dataIO.save_json(NOB_JSON, nobdict)
+		yield from bot.delete_message(message)
+		return
+	if '`togglebrep`' in a:
+		nobdict['breplace'] = not nobdict['breplace']
+		dataIO.save_json(NOB_JSON, nobdict)
+		yield from bot.delete_message(message)
+		return
+	if heroku==True:
+		prefix = os.environ['PREFIX']
+		if message.content.startswith(prefix):
+			yield from bot.process_commands(message)
+			return
+	print(nobdict)
+	if nobdict['breplace'] and nobdict['nob']:
+		channel = message.channel
+		msg = a
+		for letter in emojiletter:
+			msg = msg.replace(letter, emojiletter[letter])
+		# msg =  a.replace('b', '🅱' )
+		yield from self.bot.edit_message(message, new_content=msg)
+	if not nobdict['nob'] and not (a == '' or a == None or '`nob`' in a):
+		b = ''
+		hasname = nobdict['hasname']
+		if '`togglename`' in a:
+			nobdict['hasname'] = not hasname
+			dataIO.save_json(NOB_JSON, nobdict)
+			yield from bot.delete_message(message)
+			return
+		for i, letter in enumerate(a):
+			if(i==0 and letter.isalpha()):
+				b += '🅱️'
+			elif((not a[i-1].isalpha()) and letter.isalpha()):
+				b += '🅱️'
+			else:
+				b += letter
+		if hasname:
+			yield from bot.edit_message(message,'{}: {}'.format(message.author.display_name, b))
+		else:
+			yield from bot.edit_message(channel,'{}'.format(b))
+		
+	yield from bot.process_commands(message)
+	
 # @asyncio.coroutine
 # def on_message2(message):
 #     # print(message.author)
@@ -173,7 +221,7 @@ def on_message2(message):
 #     randomserv = bot.get_server('351873361023991821')
 #     testystuff = randomserv.get_channel('355724086149906434')
 #     testystuff = randomserv.get_channel('351873361023991821')
-    
+	
 #     try:
 #         servinvites = yield from bot.invites_from(member.server)
 #     except:
@@ -215,25 +263,25 @@ def on_message2(message):
 
 @bot.event
 async def on_ready():
-    # bot.on_member_join = myon_member_join
-    if bot.user.id == '222925389641547776':
-        bot.on_message = on_message2
-    bot.uptime = datetime.datetime.now()
-    prefix = await get_pre(bot, ' ')
-    x =   [
-        '------------------------------------------',
-        'Self-Bot Ready',
-        'Author: verix#7220',
-        'Some Cogs/Cmds By: Dino#0631',
-        '------------------------------------------',
-        'Username: {}'.format(bot.user),
-        'User ID: {}'.format(bot.user.id),
-        'Prefix: {}'.format(prefix),
-        '------------------------------------------'
-    ]
-    print('\n'.join(x))
-    if heroku:
-        print('Hosting on heroku.')
+	# bot.on_member_join = myon_member_join
+	if bot.user.id == '222925389641547776':
+		bot.on_message = on_message2
+	bot.uptime = datetime.datetime.now()
+	prefix = await get_pre(bot, ' ')
+	x =   [
+		'------------------------------------------',
+		'Self-Bot Ready',
+		'Author: verix#7220',
+		'Some Cogs/Cmds By: Dino#0631',
+		'------------------------------------------',
+		'Username: {}'.format(bot.user),
+		'User ID: {}'.format(bot.user.id),
+		'Prefix: {}'.format(prefix),
+		'------------------------------------------'
+	]
+	print('\n'.join(x))
+	if heroku:
+		print('Hosting on heroku.')
 
 
 
@@ -241,25 +289,25 @@ async def on_ready():
 
 @bot.command(pass_context=True)
 async def ping(ctx):
-    """Pong! Check your response time."""
-    msgtime = ctx.message.timestamp.now()
-    await (await bot.ws.ping())
-    now = datetime.datetime.now()
-    ping = now - msgtime
-    pong = discord.Embed(title='Pong! Response Time:', 
-    					 description=str(ping.microseconds / 1000.0) + ' ms',
-                         color=0x00ffff)
+	"""Pong! Check your response time."""
+	msgtime = ctx.message.timestamp.now()
+	await (await bot.ws.ping())
+	now = datetime.datetime.now()
+	ping = now - msgtime
+	pong = discord.Embed(title='Pong! Response Time:', 
+						 description=str(ping.microseconds / 1000.0) + ' ms',
+						 color=0x00ffff)
 
-    await bot.say(embed=pong)
+	await bot.say(embed=pong)
 
 @bot.command(pass_context=True)
 async def shutdown(ctx):
-    """Restarts the selfbot."""
-    channel = ctx.message.channel
-    await bot.say("Shutting down...")
-    await bot.logout()
+	"""Restarts the selfbot."""
+	channel = ctx.message.channel
+	await bot.say("Shutting down...")
+	await bot.logout()
 
-    
+	
 # @bot.command(name='presence')
 # async def _set(Type,*,message=None):
 #     """Change your discord game/stream!"""
@@ -426,10 +474,10 @@ async def shutdown(ctx):
 #             pass
 #     else:
 #         value = stdout.getvalue()
-        
+		
 #         if TOKEN in value:
 #             value = value.replace(TOKEN,"[EXPUNGED]")
-            
+			
 #         if ret is None:
 #             if value:
 #                 try:
@@ -534,12 +582,12 @@ async def shutdown(ctx):
 #         except Exception as e:
 #             exc = '{}: {}'.format(type(e).__name__, e)
 #             print('Failed to load extension {}\n{}'.format(extension, exc))
-            
+			
 try:
-    print('penis is starting')
-    bot.run(TOKEN, bot=False)
+	print('penis is starting')
+	bot.run(TOKEN, bot=False)
 except Exception as e:
-    print('\n[ERROR]: \n{}\n'.format(e))
-    input()
+	print('\n[ERROR]: \n{}\n'.format(e))
+	input()
 
-    
+	
