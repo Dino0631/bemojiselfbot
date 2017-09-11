@@ -12,6 +12,36 @@ import textwrap
 import traceback
 import asyncio
 from cogs.utils.dataIO import dataIO
+
+
+emojiletter={
+	'a' : '🇦',
+	'b' : '🅱', # '🇧',
+	'c' : '🇨',
+	'd' : '🇩',
+	'e' : '🇪',
+	'f' : '🇫',
+	'g' : '🇬',
+	'h' : '🇭',
+	'i' : '🇮',
+	'j' : '🇯',
+	'k' : '🇰',
+	'l' : '🇱',
+	'm' : '🇲',
+	'n' : '🇳',
+	'o' : '🇴',
+	'p' : '🇵',
+	'q' : '🇶',
+	'r' : '🇷',
+	's' : '🇸',
+	't' : '🇹',
+	'u' : '🇺',
+	'v' : '🇻',
+	'w' : '🇼',
+	'x' : '🇽',
+	'y' : '🇾',
+	'z' : '🇿'
+}
 data = {}
 defaultdata = {
 "BOT": {
@@ -102,7 +132,7 @@ def check_foldernob():
 		os.makedirs(NOBPATH)
 
 def check_filenob():
-	defaults = {'hasname':False, 'nob':False, 'breplace' : False}
+	defaults = {'hasname':False, 'nob':False, 'brep' : False}
 	print(NOB_JSON)
 	if not dataIO.is_valid_json(NOB_JSON):
 		dataIO.save_json(NOB_JSON, defaults)
@@ -126,13 +156,26 @@ def on_message2(message):
 	if '`togglenob`' in a:
 		nobdict['nob'] = not nobdict['nob']
 		dataIO.save_json(NOB_JSON, nobdict)
+		yield from bot.delete_message(message)
+	if '`togglebrep`' in a:
+		nobdict['brep'] = not nobdict['brep']
+		dataIO.save_json(NOB_JSON, nobdict)
+		yield from bot.delete_message(message)
 	print(nobdict)
 	if heroku==True:
 		prefix = os.environ['PREFIX']
 		if message.content.startswith(prefix):
 			yield from bot.process_commands(message)
 			return
-	if not dataIO.load_json(NOB_JSON)['nob'] and not (a == '' or a == None or '`nob`' in a):
+	if nobdict['brep'] and nobdict['nob'] and not '`nob`' in a:
+		msg = a.lower()
+		for letter in emojiletter:
+			msg = msg.replace(letter, emojiletter[letter]+'\u200b')
+		try:
+			yield from bot.edit_message(message, new_content=msg)
+		except:
+			pass
+	if '🅱' not in a and not dataIO.load_json(NOB_JSON)['nob'] and not (a == '' or a == None or '`nob`' in a):
 		b = ''
 		hasname = nobdict['hasname']
 		if '`togglename`' in a:
@@ -140,17 +183,20 @@ def on_message2(message):
 			dataIO.save_json(NOB_JSON, nobdict)
 		for i, letter in enumerate(a):
 			if(i==0 and letter.isalpha()):
-				b += '🅱️'
+				b += '🅱'
 			elif((not a[i-1].isalpha()) and letter.isalpha()):
-				b += '🅱️'
+				b += '🅱'
 			else:
 				b += letter
 		print(message)
-		yield from bot.delete_message(message)
-		if hasname:
-			yield from bot.send_message(channel,'{}: {}'.format(message.author.display_name, b))
-		else:
-			yield from bot.send_message(channel,'{}'.format(b))
+		try:
+			yield from bot.delete_message(message)
+			if hasname:
+				yield from bot.send_message(channel,'{}: {}'.format(message.author.display_name, b))
+			else:
+				yield from bot.send_message(channel,'{}'.format(b))
+		except:
+			pass
 		
 	yield from bot.process_commands(message)
 	
