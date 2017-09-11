@@ -539,6 +539,4 @@ try:
 	bot.run(TOKEN, bot=False)
 except Exception as e:
 	print('\n[ERROR]: \n{}\n'.format(e))
-	input()
-
 	
