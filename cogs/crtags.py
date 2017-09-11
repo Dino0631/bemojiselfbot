@@ -115,8 +115,8 @@ class CRClan:
 		for i, m in enumerate(datadict['members']):
 			rank = str(m['currenRank'])
 			name = str(m['name'])
-			tag = str(m['tag'])
-			url = crapiurl + tag
+			tag = str(m['tag']).upper()
+			url = crapiurl + '/profile/' + tag
 			level = str(m['expLevel'])
 			trophy = str(m['score'])
 			donations = str(m['donations'])
@@ -1358,7 +1358,7 @@ class CRTags:
 				await self.bot.say("You, {} do not have a tag set.".format(ctx.message.author.display_name))
 		else:
 			if tags[user.id]:
-				await self.bot.say("{}'s tag is {}.".format(user.mention, tags[user.id]))
+				await self.bot.say("{}'s tag is {}.".format(user.display_name, tags[user.id]))
 			else:
 				await self.bot.say("User {} does not have a tag set.".format(user.display_name))
 
@@ -1366,7 +1366,7 @@ class CRTags:
 	@clashroyale.command(pass_context=True)
 	async def settag(self, ctx, tag):
 		"""Save user tag. If not given a user, save tag to author"""
-			author = ctx.message.author
+		author = ctx.message.author
 		tag = tag.upper()
 		tag.replace('O', '0')
 		valid = True
