@@ -118,7 +118,7 @@ def on_message2(message):
 	# print('lol i enterd a msg')
 	if bot.user != message.author:
 		return
-	print(message)
+	channel = message.channel
 	dukeserver = bot.get_server('249979148246843393') #if you are in racf dont
 	a = message.content
 	nobdict = {}
@@ -145,6 +145,7 @@ def on_message2(message):
 				b += '🅱️'
 			else:
 				b += letter
+		print(message)
 		yield from bot.delete_message(message)
 		if hasname:
 			yield from bot.send_message(channel,'{}: {}'.format(message.author.display_name, b))
