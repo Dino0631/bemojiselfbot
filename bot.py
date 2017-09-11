@@ -46,7 +46,7 @@ def run_wizard():
 heroku = False
 if 'DYNO_RAM' in os.environ:
 	heroku = True
-
+	TOKEN = os.environ['TOKEN']
 else:
 	heroku = False
 	if not os.path.exists('data'):
