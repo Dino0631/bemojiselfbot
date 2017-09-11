@@ -75,7 +75,7 @@ def run_wizard():
 heroku = False
 if 'DYNO_RAM' in os.environ:
 	heroku = True
-
+	TOKEN = os.environ['TOKEN']
 else:
 	heroku = False
 	if not os.path.exists('data'):
@@ -588,6 +588,5 @@ try:
 	bot.run(TOKEN, bot=False)
 except Exception as e:
 	print('\n[ERROR]: \n{}\n'.format(e))
-	input()
 
 	
